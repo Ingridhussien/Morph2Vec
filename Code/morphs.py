@@ -65,9 +65,9 @@ class Morphs:
                             underived = getUnderived(word,affix,True)
                             if underived:
                                 # strip non word chars
-                                underived = cleanString(underived)
+                                underived1 = cleanString(underived)
                                 # if underived in our lexicon
-                                if underived in self.Lex:
+                                if underived1 in self.Lex:
                                     self.outdicts[idx][word] = underived
 
                     elif affix in suffixes:
@@ -75,9 +75,9 @@ class Morphs:
                             underived = getUnderived(word,affix,False)
                             if underived:
                                 # strip non word chars
-                                underived = cleanString(underived)
+                                underived1 = cleanString(underived)
                                 # if underived in our lexicon
-                                if underived in self.Lex:
+                                if underived1 in self.Lex:
                                     self.outdicts[idx][word] = underived
 
 
