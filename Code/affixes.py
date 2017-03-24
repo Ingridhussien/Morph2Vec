@@ -77,6 +77,7 @@ suffixes = ['able', # Suffixes
             'ster',
             'th',
             'ward',
-            'y']
+            'y',
+            'istan']
 
 affixes = prefixes + suffixes

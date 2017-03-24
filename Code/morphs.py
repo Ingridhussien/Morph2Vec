@@ -65,9 +65,9 @@ class Morphs:
                             underived = getUnderived(word,affix,True)
                             if underived:
                                 # strip non word chars
-                                underived1 = cleanString(underived)
+                                underived = cleanString(underived)
                                 # if underived in our lexicon
-                                if underived1 in self.Lex:
+                                if underived in self.Lex:
                                     self.outdicts[idx][word] = underived
 
                     elif affix in suffixes:
@@ -75,9 +75,9 @@ class Morphs:
                             underived = getUnderived(word,affix,False)
                             if underived:
                                 # strip non word chars
-                                underived1 = cleanString(underived)
+                                underived = cleanString(underived)
                                 # if underived in our lexicon
-                                if underived1 in self.Lex:
+                                if underived in self.Lex:
                                     self.outdicts[idx][word] = underived
 
 
@@ -93,6 +93,6 @@ class Morphs:
 
 
 test = Morphs()
-test.getLex('/Users/pokea/Documents/Work/UofA/Current/Morph2Vec/Glove/glove.6B/glove.6B.200d.txt')
-test.getMorphPairs('/Users/pokea/Documents/Work/UofA/Current/Morph2Vec/Glove/glove.6B/glove.6B.200d.txt')
-test.writePairs('/Users/pokea/Documents/Work/UofA/Current/Morph2Vec/Shared/Pairs/')
+test.getLex('/Users/pokea/Documents/Work/UofA/Current/Dissertation/Morph2Vec/Glove/glove.6B/glove.6B.200d.txt')
+test.getMorphPairs('/Users/pokea/Documents/Work/UofA/Current/Dissertation/Morph2Vec/Glove/glove.6B/glove.6B.200d.txt')
+test.writePairs('/Users/pokea/Documents/Work/UofA/Current/Dissertation/Morph2Vec/Shared/Pairs/')
