@@ -1,0 +1,40 @@
+\documentclass[12pt]{article}
+\usepackage{enumerate,lsalike}
+\usepackage{units,ifthen,tikz,graphicx}
+\usetikzlibrary{calc}
+
+%equation number; no math; no label
+\newcommand{\eq}[1]{\bigskip\par
+\stepcounter{equation}
+\noindent\parbox{.5in}{(\theequation)}
+\begin{minipage}[t]{4.5in}
+#1
+\end{minipage}
+\par\bigskip}
+
+%equation number; no math; with label
+\newcommand{\eqlab}[2]{\bigskip\par
+\refstepcounter{equation}
+\noindent\parbox{.5in}{(\theequation)}
+\label{#1}
+\begin{minipage}[t]{4.5in}
+#2
+\end{minipage}
+\par\bigskip}
+
+\title{Morph2Vec}
+\author{Nick Kloehn \\
+U.\ of Arizona}
+
+\begin{document}
+
+\maketitle
+%Intro 
+\section{Introduction}
+Stuff
+
+\bibliographystyle{lsalike}
+\par\bigskip
+\bibliography{vec}
+
+\end{document}

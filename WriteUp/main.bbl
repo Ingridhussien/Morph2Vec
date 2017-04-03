@@ -1,0 +1,34 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Anderson}{2015}]{dimensions}
+{\sc Anderson, Stephen~R.}
+\newblock 2015.
+\newblock Dimensions of morphological complexity.
+\newblock In {\em Understanding and measuring morphological complexity\/}, ed.
+  by Matthew Baerman, Dunstan Brown, \lsaand Greville~G. Corbett, 11--26.
+  Oxford: Oxford University Press.
+
+\bibitem[\protect\citeauthoryear{Corbett}{1991}]{corbett}
+{\sc Corbett, Greville~G.}
+\newblock 1991.
+\newblock {\em Gender\/}.
+\newblock Cambridge: Cambridge University Press.
+
+\bibitem[\protect\citeauthoryear{Hammond}{2015}]{hammond.predict}
+{\sc Hammond, Michael}, 2015.
+\newblock Predicting the gender of {W}elsh nouns.
+\newblock to appear in \textit{Corpus Linguistics and Linguistic Theory}.
+
+\bibitem[\protect\citeauthoryear{Shannon}{1948}]{shannon.math}
+{\sc Shannon, Claude~E.}
+\newblock 1948.
+\newblock A mathematical theory of communication.
+\newblock {\em Bell System Technical Journal\/} 27.379--423.
+
+\bibitem[\protect\citeauthoryear{Shannon}{1951}]{shannon}
+\lsadashify{{\sc Shannon, Claude~E.}}
+\newblock 1951.
+\newblock Prediction and entropy of printed {En}nglish.
+\newblock {\em Bell System Technical Journal\/} 30.50--64.
+
+\end{thebibliography}

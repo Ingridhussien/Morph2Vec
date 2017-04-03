@@ -93,6 +93,6 @@ class Morphs:
 
 
 test = Morphs()
-test.getLex('/Users/pokea/Documents/Work/UofA/Current/Morph2Vec/Glove/glove.6B/glove.6B.200d.txt')
-test.getMorphPairs('/Users/pokea/Documents/Work/UofA/Current/Morph2Vec/Glove/glove.6B/glove.6B.200d.txt')
-test.writePairs('/Users/pokea/Documents/Work/UofA/Current/Morph2Vec/Shared/Pairs/')
+test.getLex('/Users/pokea/Documents/Work/UofA/Current/Dissertation/Morph2Vec/Glove/glove.6B/glove.6B.200d.txt')
+test.getMorphPairs('/Users/pokea/Documents/Work/UofA/Current/Dissertation/Morph2Vec/Glove/glove.6B/glove.6B.200d.txt')
+test.writePairs('/Users/pokea/Documents/Work/UofA/Current/Dissertation/Morph2Vec/Morph2Vec/Pairs/')
