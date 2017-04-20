@@ -45,7 +45,6 @@ mediumship	medium
 voivodship	voivod
 connoisseurship	connoisseur
 companionship	companion
-fireship	fire
 homeownership	homeowner
 brinkmanship	brinkman
 receivership	receiver
@@ -63,7 +62,6 @@ championship	champion
 churchmanship	churchman
 mateship	mate
 entrepreneurship	entrepreneur
-co-authorship	coauthor
 longship	long
 rulership	ruler
 internship	intern
@@ -85,17 +83,11 @@ fellowship	fellow
 contendership	contender
 horsemanship	horseman
 chiefship	chief
-manship	man
-saship	sa
 discipleship	disciple
 nonpartisanship	nonpartisan
-flagship	flag
 chairmanship	chairman
-midship	mid
-co-sponsorship	cosponsor
 citizenship	citizen
 viewership	viewer
-winship	win
 kinship	kin
 heirship	heir
 chancellorship	chancellor
@@ -110,7 +102,6 @@ scholarship	scholar
 wardship	ward
 assistantship	assistant
 musicianship	musician
-anti-ship	anti
 marksmanship	marksman
 overlordship	overlord
 bipartisanship	bipartisan
@@ -151,7 +142,6 @@ partnership	partner
 deanship	dean
 chieftainship	chieftain
 guardship	guard
-interrelationship	interrelation
 associateship	associate
 penmanship	penman
 proprietorship	proprietor

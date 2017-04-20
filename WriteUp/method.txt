@@ -1,0 +1,74 @@
+we took a list of 79 derived morphemes (26 prefixes and 53 suffixes) in English and found all types that occur in the Glove corpus. We then extracted the underived forms of each type and searched to see if the underived form exists in the corpus. If it does, then we include these pairs as a type candidate for the morpheme. For example, for the morpheme re-, we find "reapply" and search to see if "apply" exists in the corpus. If found, we include it in the candidate list. These candidates were then filtered by a human to capture true morphologically related pairs. We excluded examples such as (transat, at).
+
+There are at least three levels:
+
+1) Clearly not connected. We got rid of these:  
+
+
+		clear semantic unrelatedness
+
+			pro-statehood and prostate
+
+			imaged	aged
+
+			corner corn
+
+2) Somewhat connected, but complicated:
+
+	a)Difficulty with semantic similarity:
+
+		entail tail
+
+		impound pound
+
+		organist organ
+
+		impound is related to a very constrained reading of pound. Do we want to 
+		keep it?
+
+
+
+
+	b)Hierarchical representation and level ordering -- underived versus derived
+
+		importers versus porters
+
+	c) Same surface representations, but two underlying possible forms:
+
+		darker dark 	versus 	player	play
+
+		happier happy	versus	bombardier bombard
+
+3) Clearly Semantically Related:
+
+	enjoin	join
+	
+
+Another issue:
+
+	The word vectors are not lemmatized, so inflectional forms of same root are 
+	different vectors:
+
+	enjoin
+	enjoined
+	enjoins
+
+	This problem does not exist with suffixes, because English inflection is on the 
+	left. 
+
+
+Idea:
+
+	It's not frequency relations that predict productivity, but semantic form coherence -- exmplar
+
+
+	Kurdistan, Pakistan, Afghanistan, etc.
+
+	The underived forms are probably fairly uncommon, but it should be really productive in a very constrained context. Semantically very uniform in English. Exmplar is well defined --> will be used more easily
+
+	
+
+
+
+
+

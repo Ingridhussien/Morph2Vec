@@ -21,6 +21,7 @@ from nltk.stem import *
 from collections import Counter
 from rpy2.robjects import globalenv
 from rpy2.robjects.packages import importr
+from google_ngram_downloader import readline_google_store
 r = robjects.r
 rbase = importr("robustbase")
 stemmer = PorterStemmer()
@@ -31,6 +32,23 @@ path = ('/Users/pokea/Documents/Work/UofA/Current'
 # Helper Function
 ################################################################################
 
+def lookupcounts(word):
+    """Go through all words in the google corpus and lookup frequency counts."""
+    count = 0
+    fname, url, records = next(readline_google_store(ngram_len=1, indices=word[0]))
+ 
+    try:
+        record = next(records)
+ 
+        while record.ngram != word:
+            record = next(records)
+ 
+        while record.ngram == word:
+            count = count + record.match_count
+            record = next(records)
+        
+    except StopIteration:
+        pass
 
 
 def lookup(word):

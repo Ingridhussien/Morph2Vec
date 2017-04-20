@@ -31,10 +31,27 @@ U.\ of Arizona}
 \maketitle
 %Intro 
 \section{Introduction}
-Stuff
 
-\bibliographystyle{lsalike}
-\par\bigskip
-\bibliography{vec}
+<<MeanPlot, eval=TRUE,echo=FALSE,fig.keep='last', include=TRUE,fig.cap='The average Cosine Similiarity calculation between all underived word vectors and their mean vector is plotted against the Cosine Similarity calculation between all derived vectors and their mean vector. For each affix above the X=Y line, the average Cosine Similiarity is greater for derived forms than for underived forms. We conclude that derived word forms are closer to their mean, and therefore are more semantically similar than underived forms.\\label{fig.MeanPlot}'>>=
+rm(list=ls())
+setwd('..')
+
+# Read in All Tokens
+Main <- read.table("Analysis", sep="\t", header=TRUE)
+
+# Make Vectors for each lang for Tokens
+dM <- Main$DerMean
+uM <- Main$UndMean
+
+# Plot the Means
+plot(uM,dM, xlab="Average Underived Cosine Similiarity to Mean Vector", ylab =  "Average Derived Cosine Similiarity to Mean Vector", xlim = c(0.09,0.19), ylim = c(0.09,0.19),type='n')
+
+# Plot the affix text as nodes
+text(uM, dM, labels=Main$Affix, col="black")
+
+# Plot an X = Y line
+abline(a = 0, b= 1,col=4,lty=2)
+
+@
 
 \end{document}
