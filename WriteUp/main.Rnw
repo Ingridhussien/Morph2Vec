@@ -37,7 +37,7 @@ rm(list=ls())
 setwd('..')
 
 # Read in All Tokens
-Main <- read.table("Analysis", sep="\t", header=TRUE)
+Main <- read.table("Analysis2", sep="\t", header=TRUE)
 
 # Make Vectors for each lang for Tokens
 dM <- Main$DerMean

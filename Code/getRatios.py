@@ -1,55 +1,31 @@
 """
-Get frequency counts for various morphological types, and compute
+Get frequency counts for various morphological types from Google N-gram Corpus, and compute
 measures correlated with class productivity.
 """
 __author__ = "Nick Kloehn"
-__copyright__ = "Copyright 2016, Nick Kloehn"
+__copyright__ = "Copyright 2017, Nick Kloehn"
 __credits__ = []
-__version__ = "1.0"
+__version__ = "2.0"
 __maintainer__ = "Nick Kloehn"
 __email__ = "See the author's website"
 
 ################################################################################
 # Imports and Globals
 ################################################################################
-from affixes import *
 from collections import Counter
 from os import walk
 import math, numpy as np, os, re, rpy2.robjects as robjects
 from nltk.corpus import wordnet as wn
-from nltk.stem import *
 from collections import Counter
 from rpy2.robjects import globalenv
 from rpy2.robjects.packages import importr
 from google_ngram_downloader import readline_google_store
+import pdb
 r = robjects.r
 rbase = importr("robustbase")
-stemmer = PorterStemmer()
-# location of corpus
-path = ('/Users/pokea/Documents/Work/UofA/Current'
-        '/Gentropy/WaCKyCorpus')
 ################################################################################
 # Helper Function
 ################################################################################
-
-def lookupcounts(word):
-    """Go through all words in the google corpus and lookup frequency counts."""
-    count = 0
-    fname, url, records = next(readline_google_store(ngram_len=1, indices=word[0]))
- 
-    try:
-        record = next(records)
- 
-        while record.ngram != word:
-            record = next(records)
- 
-        while record.ngram == word:
-            count = count + record.match_count
-            record = next(records)
-        
-    except StopIteration:
-        pass
-
 
 def lookup(word):
     """Returns the Number of Definitions of a word from Wordnet."""
@@ -95,149 +71,141 @@ def LTS(x,y):
     #
     return [corr, prob, intercept, typePR, tokenPR]
 
-def extractVars(typeSet, vocab):
+def extractVars(pairDict,vocab):
     """"Take all the matches of a morphological type and get the
     frequencies of the word/base pairs. Compare them to figure out the
     different vars. Also get # of dictionary entries from wordnet."""
     # Init token count, Hapax Count, and calculate Type Count
-    N, V1, typeDefs, V  = 0, 0, 0, len(typeSet)
+    N, V1, typeDefs, V  = 0, 0, 0, len(pairDict.items())
     # Init frequency structures for r-squared
     x, y = [], []
     # Go through types
-    for word,base in typeSet:
-        typeDefs += lookup(word)
-        # get word token frequency
-        freqWord = vocab[word]
+    for derived,underived in pairDict.items():
+        typeDefs += lookup(derived)
+        # get derived token frequency
+        freqDer = vocab[derived]
         # ... and add it to total token frequence (n)
-        N += freqWord
+        N += freqDer
         # If it's a hapax,
-        if freqWord == 1:
+        if freqDer == 1:
             # add it to V1
             V1 += 1
         # Get log frequency for r-squared
-        logfreqWord = math.log(freqWord)
+        logfreqDer = math.log(freqDer)
         # Check whether base exists
-        if base in vocab.keys():
-            logfreqBase = math.log(vocab[base])
+        if underived in vocab.keys():
+            logfreqUnd = math.log(vocab[underived])
         else:
             logfreqBase = float(0)
         #Add frequencies to x and y
-        x.append(logfreqWord)
-        y.append(logfreqBase)
+        x.append(logfreqDer)
+        y.append(logfreqUnd)
     # Calculate P by dividing P1 by N
     try: P = float(V1)/n
     except: P = 0
     # Get Type definition average
-    try: avgDefs = float(typeDefs)/ len(typeSet)
+    try: avgDefs = float(typeDefs)/ len(pairDict.items())
     except: avgDefs = 0
     try:
         # Do r-squared and extract results
         return [V1, P, V] + LTS(x,y) + [avgDefs]
     except:
         return [V1, P, V] + [None]*5 + [avgDefs]
-    
-def stripTypes(word, affix, front):
-    """Strip off the morpheme from a complex form, and return both the
-    complex form and the base, if both forms share the same lemma."""
 
-    lemma = stemmer.stem(word)
-    for m in re.compile(affix).finditer(word):
-        if front:
-            base = word[m.end():]
-        else:
-            base = word[:m.start()]
-    if base in lemma:
-        print("Affix: " + affix)
-        print("Derived: " + word)
-        print("Underived: " + base)
-        print("\n")
-        return base
-    else:
-        return False
-    
+class Corpora:
+    """Obeject to contain the corpus files."""
 
-def addTypes(vocabulary, affixes, mTypes, front):
-    """For the affix keys, add all derived types, and get their
-    underived forms as values."""
-    for affix in affixes:
-        # Value for each affix will be a set containing tuples of der/under forms
-        mTypes[affix] = set()
-        # cylce through the Corpus...   
-        for word in vocabulary.keys():
-            # if prefixes,
-            if front:
-                if word.startswith(affix):
-                    # match and then get the value by stripping from front,
-                    base = stripTypes(word, affix, True)
-                    if base in vocabulary.keys():
-                        print(word)
-                        print(base)
-                        print("\n")
-                        mTypes[affix].add((word,base))
-            else:
-                # and if suffix,
-                if word.endswith(affix):
-                    # match and get the value by stripping from the back
-                    base = stripTypes(word, affix, False)
-                    if base in vocabulary.keys():
-                        print(word)
-                        print(base)
-                        print("\n")
-                        mTypes[affix].add((word,base))
-    return mTypes
+    def __init__(self,cDir):
+        """Get the names of the files."""
+        self.theFiles = list()
+        self.Ngrams = Counter()
+
+        # get all file names/paths
+        for (dirpath, dirnames, fs) in walk(cDir):
+            # Got through each edited pair file
+            for f in fs:
+                if f != '.DS_Store':
+                    info = (dirpath + '/' + f,f)
+                    self.theFiles.append(info)
+            self.dir = dirpath
+
+        # Go through the files and create a dict for each file. Add the word pairs to the dict.
+        self.affixDicts = [Counter()for n in range(len(self.theFiles))]
+        self.affixNames = [f[1] for f in self.theFiles]
+        for idx in range(len(self.theFiles)):
+            with open(self.theFiles[idx][0], encoding="ISO-8859-1") as infile:
+                for line in infile:
+                    d,u = re.split('\t',line.strip())
+                    self.affixDicts[idx][d] = u
+                    self.Ngrams[d],self.Ngrams[u] = 0,0
+
+    def getAffixDicts(self):
+        return self.affixDicts
+
+    def getAffixNames(self):
+        return self.affixNames
+
+    def getPath(self):
+        return self.dir
+
+    def getNgrams(self):
+        """Get Frequency of Words in Google Ngram Corpus."""
+        keys = self.Ngrams.keys()
+        for char in list(map(chr, range(97, 123))):
+                try:
+                    fname, url, records = next(readline_google_store(ngram_len=1,indices=char))
+                    count = 0
+                    current = ''
+                    while records:
+                        try:
+                            token,year,match,volume = next(records)
+                            #print(token)
+                            if token in keys:
+                                if token == current:
+                                    count += match
+                                else:
+                                    self.Ngrams[current] = count
+                                    current = token
+                                    count = 0
+                            else:
+                                continue
+                        except StopIteration:
+                            break
+                except:
+                    continue
+        return self.Ngrams
 
 
 class Count:
-    
-    def corpus(self,path):
 
-        self.path = path
-        self.corpus = list()
-        self.outf = path + '/AffixPairs'
-        self.outf2 = path + '/Predictors'
-        self.results = {}
-        self.vocab = Counter()
-        self.affixes = (prefixes,suffixes)
-            
-        for (dirpath, dirnames, fs) in walk(self.path):
-                
-            self.corpus.extend([dirpath + '/' + f for f in fs if 'UK' in f])
-                
-        # parse corpus files and record counts of tokens
-        for f in self.corpus:
-            if f.endswith('.xml'):
-                with open(f, encoding="ISO-8859-1") as infile:
-                    for line in infile:
-                        try:
-                            tok, tag, lemma = re.split('\t+', line.strip())
-                            token = tok.lower()
-                            self.vocab[token] += 1
-                        except:
-                            continue
-  
-        # Go through the dictionary we just created,  and match words to the classes and
-        # add those words to a set that is the value of the
-        # morpheme (key) in a dict
-        pfixes, sfixes = self.affixes
-        self.mTypes = addTypes(self.vocab,pfixes,mTypes={},front=True)
-        self.mTypes = addTypes(self.vocab,sfixes,mTypes=self.mTypes,front=False)
-        # Go through all affixes, and get variables (found in Readme)
-        for morph in self.mTypes.keys():
-            self.results[morph] = extractVars( self.mTypes[morph], self.vocab)
+    def __init__(self,path):
+        """Initialize object by getting the organized corpus files from Corpora object"""
+        c = Corpora(path)
+        self.affixDicts = c.getAffixDicts()
+        self.affixNames = c.getAffixNames()
+        self.outf = c.getPath() + '/Predictors'
+        self.Ngrams = c.getNgrams()
+        self.results = dict()
 
+    def getRatios(self):
+        """Got through affix pairs and calculate the productivity ratios."""
+        for idx in range(len(self.affixNames)):
+            affixName = self.affixNames[idx]
+            affixDict = self.affixDicts[idx]
+            self.results[affixName] = extractVars(affixDict,self.Ngrams)
+
+    def writeVars(self):
         with open(self.outf, 'w') as fout:
-            for affix,wordset in self.mTypes.items():
-                fout.write(affix)
-                fout.write("\t")
-                fout.write(str(wordset))
-                fout.write("\n")
-                
-        with open(self.outf2, 'w') as fout:
             for affix,resulist in self.results.items():
                 fout.write(affix)
                 fout.write("\t")
                 fout.write(str(resulist))
                 fout.write("\n")                
             
-                        
-Count().corpus(path)
+def main():              
+    test = Count('/Users/pokea/Documents/Work/UofA/Current/Dissertation/Morph2Vec/Morph2Vec/EditedPairs')
+    test.getRatios()
+    test.writeVars()
+
+if __name__ == '__main__':
+    main()
