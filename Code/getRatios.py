@@ -20,12 +20,21 @@ from collections import Counter
 from rpy2.robjects import globalenv
 from rpy2.robjects.packages import importr
 from google_ngram_downloader import readline_google_store
-import pdb
 r = robjects.r
 rbase = importr("robustbase")
 ################################################################################
 # Helper Function
 ################################################################################
+
+def stringify(thelist):
+    thestring = ''
+    size = len(thelist)
+    for idx in range(size):
+        thestring += str(thelist[idx])
+        if idx < size-1:
+            thestring += '\t'
+
+    return thestring
 
 def lookup(word):
     """Returns the Number of Definitions of a word from Wordnet."""
@@ -80,6 +89,8 @@ def extractVars(pairDict,vocab):
     # Init frequency structures for r-squared
     x, y = [], []
     # Go through types
+    hits = 0
+    misses = 0
     for derived,underived in pairDict.items():
         typeDefs += lookup(derived)
         # get derived token frequency
@@ -91,17 +102,24 @@ def extractVars(pairDict,vocab):
             # add it to V1
             V1 += 1
         # Get log frequency for r-squared
-        logfreqDer = math.log(freqDer)
+        try:
+            logfreqDer = math.log(freqDer)
+            hits += 1
+        except:
+            logfreqDer = float(0)
+            misses += 1
         # Check whether base exists
-        if underived in vocab.keys():
+        try:
             logfreqUnd = math.log(vocab[underived])
-        else:
-            logfreqBase = float(0)
+        except:
+            logfreqUnd = float(0)
         #Add frequencies to x and y
         x.append(logfreqDer)
         y.append(logfreqUnd)
+    print("retrieved\t" + str(hits))
+    print("missed\t" + str(misses))
     # Calculate P by dividing P1 by N
-    try: P = float(V1)/n
+    try: P = float(V1)/N
     except: P = 0
     # Get Type definition average
     try: avgDefs = float(typeDefs)/ len(pairDict.items())
@@ -137,7 +155,7 @@ class Corpora:
                 for line in infile:
                     d,u = re.split('\t',line.strip())
                     self.affixDicts[idx][d] = u
-                    self.Ngrams[d],self.Ngrams[u] = 0,0
+                    self.Ngrams[d],self.Ngrams[u] = 0,0     
 
     def getAffixDicts(self):
         return self.affixDicts
@@ -148,31 +166,18 @@ class Corpora:
     def getPath(self):
         return self.dir
 
-    def getNgrams(self):
+    def getNgrams(self,Nfile):
         """Get Frequency of Words in Google Ngram Corpus."""
         keys = self.Ngrams.keys()
-        for char in list(map(chr, range(97, 123))):
-                try:
-                    fname, url, records = next(readline_google_store(ngram_len=1,indices=char))
-                    count = 0
-                    current = ''
-                    while records:
-                        try:
-                            token,year,match,volume = next(records)
-                            #print(token)
-                            if token in keys:
-                                if token == current:
-                                    count += match
-                                else:
-                                    self.Ngrams[current] = count
-                                    current = token
-                                    count = 0
-                            else:
-                                continue
-                        except StopIteration:
-                            break
-                except:
-                    continue
+        with open(Nfile, encoding="ISO-8859-1") as infile:
+                for line in infile:
+                    try:
+                        tok,count = re.split('\t',line.strip())
+                        if tok in keys:
+                            self.Ngrams[tok] = float(count)
+                    except:
+                        print(line)
+                        continue
         return self.Ngrams
 
 
@@ -183,8 +188,8 @@ class Count:
         c = Corpora(path)
         self.affixDicts = c.getAffixDicts()
         self.affixNames = c.getAffixNames()
-        self.outf = c.getPath() + '/Predictors'
-        self.Ngrams = c.getNgrams()
+        self.Ngrams = c.getNgrams('/Users/pokea/Documents/Work/UofA/Current/Dissertation/Morph2Vec/Morph2Vec/EditedPairsDictionary')
+        self.outf = '/Users/pokea/Documents/Work/UofA/Current/Dissertation/Morph2Vec/Predictors'
         self.results = dict()
 
     def getRatios(self):
@@ -196,10 +201,21 @@ class Count:
 
     def writeVars(self):
         with open(self.outf, 'w') as fout:
+            fout.write("Affix"+"\t")
+            fout.write("N"+"\t")
+            fout.write("V1"+"\t")
+            fout.write("typeDefs"+"\t")
+            fout.write("V"+"\t")
+            fout.write("Corr"+"\t")
+            fout.write("Prob"+"\t")
+            fout.write("Intercept"+"\t")
+            fout.write("TypePR"+"\t")
+            fout.write("TokenPR"+"\t")
+            fout.write("AvgDefs"+"\n")         
             for affix,resulist in self.results.items():
                 fout.write(affix)
                 fout.write("\t")
-                fout.write(str(resulist))
+                fout.write(str(stringify(resulist)))
                 fout.write("\n")                
             
 def main():              

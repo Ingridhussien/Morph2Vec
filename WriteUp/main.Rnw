@@ -54,4 +54,25 @@ abline(a = 0, b= 1,col=4,lty=2)
 
 @
 
+<<Plot2, eval=TRUE,echo=FALSE,fig.keep='last', include=TRUE,fig.cap='Hi.\\label{fig.Plot2}'>>=
+rm(list=ls())
+setwd('..')
+
+# Read in All Tokens
+Main <- read.table("Predictors", sep="\t", header=TRUE)
+
+# Make Vectors for each lang for Tokens
+
+
+# Plot the Means
+#plot(uM,dM, xlab="Average Underived Cosine Similiarity to Mean Vector", ylab =  "Average Derived Cosine Similiarity to Mean Vector",type='n')
+
+# Plot the affix text as nodes
+#text(uM, dM, labels=Main$Affix, col="black")
+
+# Plot an X = Y line
+#abline(a = 0, b= 1,col=4,lty=2)
+
+@
+
 \end{document}
